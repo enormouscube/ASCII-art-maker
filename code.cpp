@@ -1,16 +1,20 @@
-﻿#include "lodepng.h"
+﻿#include "lodepng/lodepng.h"
+
 #include <vector>
 #include <iostream>
 #include <map>
 #include <fstream>
+#include <expected>
 
 //decoding function
-unsigned DecodeOneStep(std::vector<unsigned char> &image, const char* filename) {
-    unsigned width, height;
-    unsigned error = lodepng::decode(image, width, height, filename);
+inline auto DecodeOneStep(auto &image, std::string_view filename) -> std::expected<uint32_t, uint32_t> {
+    uint32_t width, height;
+    auto error = lodepng::decode(image, width, height, filename.data());
     if (error) std::cout << "I CAN'T WORK!!\n";
     return width;
 }
+
+
 //turning image to grayscale function
 void ToGray(std::vector<unsigned char> &image, std::vector<unsigned> &gray_image, int n) {
     for (int i = 0; i < n; i += 4) gray_image.push_back((image[i] + image[i + 1] + image[i + 2]) / 3);
